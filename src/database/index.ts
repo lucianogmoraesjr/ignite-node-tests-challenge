@@ -1,3 +1,14 @@
-import { createConnection } from 'typeorm';
+import { createConnection, getConnectionOptions } from 'typeorm';
 
-(async () => await createConnection())();
+(async () => {
+  const defaultOptions = await getConnectionOptions();
+
+  if (process.env.NODE_ENV === 'test') {
+    Object.assign(defaultOptions, {
+      database: 'ignite-tests',
+    });
+    await createConnection(defaultOptions);
+  } else {
+    await createConnection();
+  }
+})();
